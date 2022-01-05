@@ -1,2 +1,6 @@
-# IDE's
-.idea
+# Jetbrains
+.idea/
+*.iml
+
+# Serverless
+.serverless/

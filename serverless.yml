@@ -1,0 +1,14 @@
+service: shots-recorder
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: go1.x
+  lambdaHashingVersion: 20201221
+  region: eu-central-1
+  stage: dev
+
+layers:
+  ffmpeg-base:
+    path: ffmpeg/layer
+    retain: false

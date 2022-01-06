@@ -1,0 +1,19 @@
+service: ffmpeg-layer
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  region: eu-central-1
+
+layers:
+  ffmpeg:
+    path: layer
+    retain: false
+
+resources:
+  Outputs:
+    FfmpegLayerExport:
+      Value:
+        Ref: FfmpegLambdaLayer
+      Export:
+        Name: FfmpegLambdaLayer

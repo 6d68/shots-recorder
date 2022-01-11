@@ -5,3 +5,11 @@
 # Serverless
 .serverless/
 **/.serverless
+
+
+# build artifacts
+bin
+
+# test outputs
+/converter/test_data/.mp4
+/converter/test_data/recording.mp4

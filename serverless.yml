@@ -7,8 +7,51 @@ provider:
   lambdaHashingVersion: 20201221
   region: eu-central-1
   stage: dev
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}/*
+            - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}/*
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+            - s3:ListBucketVersions
+          Resource:
+            - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
 
-layers:
-  ffmpeg-base:
-    path: ffmpeg/layer
-    retain: false
+custom:
+  bucketUploads: cam-uploads
+  bucketShots: shots
+  region: ${self:provider.region, "eu-central-1"}
+
+package:
+  patterns:
+    - '!./**'
+    - ./bin/**
+
+functions:
+  converter:
+    handler: bin/converter
+    layers:
+      - ${cf:ffmpeg-layer-dev.FfmpegLayerExport}
+    memorySize: 2240
+    timeout: 60
+    environment:
+      SHOTS_BUCKET: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
+      REGION: ${self:custom.region}
+    events:
+      - s3:
+          bucket: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
+          event: s3:ObjectCreated:*
+
+resources:
+  Resources:
+    BucketShots:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}

@@ -23,7 +23,7 @@ provider:
             - s3:ListBucketVersions
           Resource:
             - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
-
+            - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
 custom:
   bucketUploads: cam-uploads
   bucketShots: shots
@@ -48,7 +48,15 @@ functions:
       - s3:
           bucket: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
           event: s3:ObjectCreated:*
-
+  shotsRetreiver:
+    handler: bin/shots-retreiver
+    environment:
+      SHOTS_BUCKET: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
+      REGION: ${self:custom.region}
+    events:
+      - httpApi:
+          path: /shots
+          method: get
 resources:
   Resources:
     BucketShots:

@@ -10,4 +10,4 @@ clean:
 
 deploy-converter: clean build
 	sls deploy function -f converter
-	sls deploy function -f shots-retreiver
+	sls deploy function -f shotsRetreiver

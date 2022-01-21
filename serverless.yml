@@ -24,6 +24,15 @@ provider:
           Resource:
             - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
             - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
+  httpApi:
+    authorizers:
+      jwtAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: ${ssm:authIssuer}
+        audience:
+          - ${ssm:authAudience}
+
 custom:
   bucketUploads: cam-uploads
   bucketShots: shots
@@ -57,6 +66,8 @@ functions:
       - httpApi:
           path: /shots
           method: get
+          authorizer:
+            name: jwtAuthorizer
 resources:
   Resources:
     BucketShots:

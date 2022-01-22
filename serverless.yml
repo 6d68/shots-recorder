@@ -25,6 +25,16 @@ provider:
             - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketUploads}
             - arn:aws:s3:::${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
   httpApi:
+    cors:
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - GET
+        - OPTIONS
+      allowedOrigins:
+        - http://localhost:3000
+    payload: '2.0'
     authorizers:
       jwtAuthorizer:
         type: jwt

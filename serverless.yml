@@ -78,6 +78,17 @@ functions:
           method: get
           authorizer:
             name: jwtAuthorizer
+  shotsUrlSigner:
+    handler: bin/shots-url-signer
+    environment:
+      SHOTS_BUCKET: ${self:service.name}-${opt:stage, self:provider.stage, 'dev'}-${self:custom.bucketShots}
+      REGION: ${self:custom.region}
+    events:
+      - httpApi:
+          path: /shots/actions/create-temp-url
+          method: post
+          authorizer:
+            name: jwtAuthorizer
 resources:
   Resources:
     BucketShots:
